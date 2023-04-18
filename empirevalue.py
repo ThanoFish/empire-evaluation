@@ -9,13 +9,16 @@ intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
+
 @client.event
 async def on_ready():
     print("Ready!")
 
+
 @tree.command(name="test", description="replys omg")
 async def test(ctx, arg: str):
     await ctx.response.send_message(arg)
+
 
 @tree.command(name="sync", description="syncs commands")
 async def sync(ctx):
@@ -25,32 +28,38 @@ async def sync(ctx):
     else:
         await ctx.response.send_message("You can't use this command!")
 
+
 @tree.command(name="empirestats", description="get info about the stats of THE EMPIRE")
 async def empirestats(ctx: discord.Interaction, api_key: str):
     embed = discord.Embed(
         title="THE EMPIRE BUSINESS"
     )
-    
-    minion_data = get_minion_data("d12ac4434e7141baaf1fa09fd60651ce", "badcaa4ac60a4f5c883b553c8a45bd63", api_key)
-    
-    embed.add_field(name="Crafted minions:", value=minion_data["crafted"], inline=False)
-    embed.add_field(name="Minion slots:", value=minion_data["slots"], inline=False)
-    
+
+    minion_data = get_minion_data(
+        "d12ac4434e7141baaf1fa09fd60651ce", "badcaa4ac60a4f5c883b553c8a45bd63", api_key)
+
+    embed.add_field(name="Crafted minions:",
+                    value=minion_data["crafted"], inline=False)
+    embed.add_field(name="Minion slots:",
+                    value=minion_data["slots"], inline=False)
+
     WOOD_TYPES = ['ENCHANTED_ACACIA_LOG', 'ENCHANTED_BIRCH_LOG', 'ENCHANTED_DARK_OAK_LOG',
                   'ENCHANTED_JUNGLE_LOG', 'ENCHANTED_OAK_LOG', 'ENCHANTED_SPRUCE_LOG']
-    
+
     for i in WOOD_TYPES:
         info = get_prices(i)
-        
+
         embed.add_field(name=i, value=f"""
                         Sell offer: {info["sell_offer"]}
                         Insta sell: {info["insta_sell"]}
                         Spread: {round(info["spread"], 1)}
                         """, inline=False)
-    
-    embed.add_field(name="Gigachad?:", value=("Yes 🥶" if random.random() < 0.968 else "No 💀"))
-    
+
+    embed.add_field(name="Gigachad?:", value=(
+        "Yes 🥶" if random.random() < 0.968 else "No 💀"))
+
     await ctx.response.send_message(embed=embed)
+
 
 @tree.command(name="isgigachad", description="Checks if the empire is gigachad or not")
 async def isgigachad(ctx):

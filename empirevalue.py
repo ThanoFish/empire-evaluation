@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from empirevalue.skyblockapiquery import get_prices, get_minion_data
+from skyblockapiquery import get_prices, get_minion_data
 import random
 from dotenv import load_dotenv
 import os

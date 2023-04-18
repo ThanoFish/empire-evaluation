@@ -1,7 +1,9 @@
 import discord
 from discord import app_commands
-from skyblockapiquery import get_prices, get_minion_data
+from empirevalue.skyblockapiquery import get_prices, get_minion_data
 import random
+from dotenv import load_dotenv
+import os
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -54,4 +56,6 @@ async def empirestats(ctx: discord.Interaction, api_key: str):
 async def isgigachad(ctx):
     await ctx.response.send_message("Yes 🥶" if random.random() < 0.968 else "No 💀")
 
-client.run("MTA5NDY2MzA4MDkwODE2MTAzNA.GOfJSv.hmOxT4BIk1WnyGF-g8Hl88peWJ-tu-eQ78zRGM")
+load_dotenv()
+
+client.run(os.getenv('TOKEN'))

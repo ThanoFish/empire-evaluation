@@ -65,6 +65,22 @@ async def empirestats(ctx: discord.Interaction, api_key: str):
 async def isgigachad(ctx):
     await ctx.response.send_message("Yes 🥶" if random.random() < 0.968 else "No 💀")
 
+@tree.command(name="empirevalue", description="Responds with the price of one stock of The Empire.")
+async def empirevalue(ctx):
+    await ctx.response.send_message("""
+                                    Stock count: 10 000 000
+                                    Price per stock: 
+                                        1 coins (base)
+                                        + 5 coins (empire growth)
+                                        + 20 coins (inflation)
+                                        + 5 coins (wood value)
+                                        + 3 coins (minions)
+                                    Total price per stock: 34 coins
+                                    Total value: 340 000 000 coins
+                                    
+                                    (updates once every 2 hours)
+                                    """)
+
 load_dotenv()
 
 client.run(os.getenv('TOKEN'))

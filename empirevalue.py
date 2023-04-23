@@ -69,13 +69,7 @@ async def isgigachad(ctx):
 async def empirevalue(ctx):
     await ctx.response.send_message("""
 Stock count: 10 000 000
-Price per stock: 
-    1 coins (base)
-    + 5 coins (empire growth)
-    + 20 coins (inflation)
-    + 5 coins (wood value)
-    + 3 coins (minions)
-Total price per stock: 34 coins
+Price per stock: 34 coins
 Total value: 340 000 000 coins
 
 (updates once every 2 hours)

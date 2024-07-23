@@ -1,10 +1,10 @@
 import discord
 from discord import app_commands
 from skyblockapiquery import get_prices, get_minion_data, get_minion_craft_cost, get_bazaar_instabuy
+from helper import format_coins
 import random
 from dotenv import load_dotenv
 import os
-from helper import format_coins
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)

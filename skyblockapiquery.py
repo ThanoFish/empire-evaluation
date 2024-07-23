@@ -33,11 +33,6 @@ def get_prices(item):
         'spread': spread,
     }
 
-# constants
-API_KEY = "01f03fd6-8de4-4a06-bde8-3726ad9da3d1"
-# PROFILE_ID = "d12ac4434e7141baaf1fa09fd60651ce"
-# PLAYER_UUID = "badcaa4ac60a4f5c883b553c8a45bd63"
-
 def get_minion_data(profile_id, player_id, key):
     data = json.loads(
     requests.get(f"https://api.hypixel.net/skyblock/profile?key={key}&profile={profile_id}").text

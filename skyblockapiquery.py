@@ -51,3 +51,26 @@ def get_minion_data(profile_id, player_id, key):
         "crafted": crafted_minions,
         "slots": slots
     }
+
+def get_bazaar_instabuy(item):
+    return requests.get(f"https://api.hypixel.net/skyblock/bazaar").json()["products"][item]["sell_summary"][0]["pricePerUnit"]
+
+def get_minion_craft_cost(minion):
+    repo = "https://raw.githubusercontent.com/NotEnoughUpdates/NotEnoughUpdates-REPO/master/items/"
+    
+    cost = {}
+    
+    for item in requests.get(repo + minion + ".json").json()["recipe"].values():
+        item_type, count = item.split(":")
+        if "_GENERATOR_" in item_type:
+            parent_cost = get_minion_craft_cost(item_type)
+            for x in parent_cost:
+                cost.setdefault(x, 0)
+                cost[x] += parent_cost[x]
+            continue
+        cost.setdefault(item_type, 0)
+        cost[item_type] += int(count)
+    
+    return cost
+
+print(get_minion_craft_cost("REDSTONE_GENERATOR_11"))

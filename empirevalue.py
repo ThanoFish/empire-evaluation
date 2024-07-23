@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from skyblockapiquery import get_prices, get_minion_data
+from skyblockapiquery import get_prices, get_minion_data, get_minion_craft_cost
 import random
 from dotenv import load_dotenv
 import os
@@ -80,5 +80,9 @@ Total value: 340 000 000 000 000 000 000 coins
 (updates once every 2 hours)
                                     """)
 
+@tree.command(name="minioncraft")
+async def minioncraft(ctx, minion: str):
+    cost = get_minion_craft_cost(minion)
+    await ctx.response.send_message(str(cost))
 
 client.run(os.getenv('TOKEN'))

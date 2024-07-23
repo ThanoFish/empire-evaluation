@@ -1,9 +1,10 @@
 import discord
 from discord import app_commands
-from skyblockapiquery import get_prices, get_minion_data, get_minion_craft_cost
+from skyblockapiquery import get_prices, get_minion_data, get_minion_craft_cost, get_bazaar_instabuy
 import random
 from dotenv import load_dotenv
 import os
+from helper import format_coins
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -83,6 +84,12 @@ Total value: 340 000 000 000 000 000 000 coins
 @tree.command(name="minioncraft")
 async def minioncraft(ctx, minion: str):
     cost = get_minion_craft_cost(minion)
-    await ctx.response.send_message(str(cost))
+    
+    message = ""
+    
+    for item in cost.keys():
+        message += f"{cost[item]}x {item.replace('_', ' ').title()} ({format_coins(get_bazaar_instabuy(item) * cost[item])} coins)\n"
+    
+    await ctx.response.send_message(message)
 
 client.run(os.getenv('TOKEN'))

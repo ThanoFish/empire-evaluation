@@ -53,6 +53,7 @@ def get_minion_data(profile_id, player_id, key):
     }
 
 def get_bazaar_instabuy(item):
+    if "WOOD_" in item: return 0  
     return requests.get(f"https://api.hypixel.net/skyblock/bazaar").json()["products"][item]["sell_summary"][0]["pricePerUnit"]
 
 def get_minion_craft_cost(minion):
@@ -72,5 +73,3 @@ def get_minion_craft_cost(minion):
         cost[item_type] += int(count)
     
     return cost
-
-print(get_minion_craft_cost("REDSTONE_GENERATOR_11"))

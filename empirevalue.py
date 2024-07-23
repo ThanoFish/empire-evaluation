@@ -5,6 +5,7 @@ from helper import format_coins
 import random
 from dotenv import load_dotenv
 import os
+import sys
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -21,7 +22,7 @@ async def on_ready():
 
 @tree.command(name="test", description="replys omg")
 async def test(ctx, arg: str):
-    await ctx.response.send_message(arg)
+    await ctx.response.send_message(arg + "1")
 
 
 @tree.command(name="sync", description="syncs commands")
@@ -31,6 +32,11 @@ async def sync(ctx):
         await ctx.response.send_message("Done!")
     else:
         await ctx.response.send_message("You can't use this command!")
+        
+@tree.command(name="reset")
+async def reset(ctx):
+    if (ctx.user.id != 700998149170397305): return
+    os.execv(sys.executable, ["python"] + sys.argv)
 
 
 @tree.command(name="empirestats", description="get info about the stats of THE EMPIRE")

@@ -88,13 +88,24 @@ Total value: 340 000 000 000 000 000 000 coins
                                     """)
 
 @tree.command(name="minioncraft")
-async def minioncraft(ctx, minion: str):
+async def minioncraft(ctx, minion_type: str, tier: int):
+    ctx.response.defer()
+    
+    minion = f"{minion_type.upper()}_GENERATOR_{tier}"
+    
     cost = get_minion_craft_cost(minion)
     
     message = ""
     
+    total_price = 0
+    
     for item in cost.keys():
-        message += f"{cost[item]}x {item.replace('_', ' ').title()} ({format_coins(get_bazaar_instabuy(item) * cost[item])} coins)\n"
+        if "WOOD_" in item: continue
+        price = get_bazaar_instabuy(item) * cost[item]
+        total_price += price
+        message += f"{cost[item]}x {item.replace('_', ' ').title()} ({format_coins(price)} coins)\n"
+    
+    message += "\nTotal: " + format_coins(total_price) + " coins"
     
     await ctx.response.send_message(message)
 

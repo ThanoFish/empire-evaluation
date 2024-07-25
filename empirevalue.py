@@ -89,8 +89,6 @@ Total value: 340 000 000 000 000 000 000 coins
 
 @tree.command(name="minioncraft")
 async def minioncraft(ctx, minion_type: str, tier: int):
-    ctx.response.defer()
-    
     minion = f"{minion_type.upper()}_GENERATOR_{tier}"
     
     cost = get_minion_craft_cost(minion)

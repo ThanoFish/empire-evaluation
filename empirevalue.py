@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 import sys
 
+AZ = 700998149170397305 # tova sum az
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
@@ -14,6 +15,8 @@ tree = app_commands.CommandTree(client)
 load_dotenv()
 
 api_key = os.getenv('API_KEY')
+THE_EMPIRE = "d12ac4434e7141baaf1fa09fd60651ce"
+NIKEYBG = "badcaa4ac60a4f5c883b553c8a45bd63"
 
 @client.event
 async def on_ready():
@@ -27,7 +30,7 @@ async def test(ctx, arg: str):
 
 @tree.command(name="sync", description="syncs commands")
 async def sync(ctx):
-    if (ctx.user.id == 700998149170397305):
+    if (ctx.user.id == AZ):
         await tree.sync()
         await ctx.response.send_message("Done!")
     else:
@@ -35,7 +38,7 @@ async def sync(ctx):
         
 @tree.command(name="reset")
 async def reset(ctx):
-    if (ctx.user.id != 700998149170397305): return
+    if (ctx.user.id != AZ): return
     os.execv(sys.executable, ["python"] + sys.argv)
 
 
@@ -48,7 +51,7 @@ async def empirestats(ctx: discord.Interaction):
     )
 
     minion_data = get_minion_data(
-        "d12ac4434e7141baaf1fa09fd60651ce", "badcaa4ac60a4f5c883b553c8a45bd63", api_key)
+        THE_EMPIRE, NIKEYBG, api_key)
 
     embed.add_field(name="Crafted minions:",
                     value=minion_data["crafted"], inline=False)

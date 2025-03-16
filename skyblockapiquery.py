@@ -35,10 +35,10 @@ def get_prices(item):
 
 def get_minion_data(profile_id, player_id, key):
     data = json.loads(
-    requests.get(f"https://api.hypixel.net/skyblock/profile?key={key}&profile={profile_id}").text
+    requests.get(f"https://api.hypixel.net/v2/skyblock/profile?key={key}&profile={profile_id}").text
     )
     
-    crafted_minions = len(data['profile']['members'][player_id]['crafted_generators'])
+    crafted_minions = len(data['profile']['members'][player_id]['player_data']['crafted_generators'])
     
     slots = get_slots(crafted_minions, data['profile']['community_upgrades'])
     

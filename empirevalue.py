@@ -41,6 +41,8 @@ async def reset(ctx):
 
 @tree.command(name="empirestats", description="get info about the stats of THE EMPIRE")
 async def empirestats(ctx: discord.Interaction):
+    await ctx.response.defer(thinking=True);
+    
     embed = discord.Embed(
         title="THE EMPIRE BUSINESS"
     )
@@ -70,7 +72,7 @@ async def empirestats(ctx: discord.Interaction):
     embed.add_field(name="Gigachad?:", value=(
         "Yes 🥶" if random.random() < 0.968 else "No 💀"))
 
-    await ctx.response.send_message(embed=embed)
+    await ctx.followup.send(embed=embed)
 
 
 @tree.command(name="isgigachad", description="Checks if the empire is gigachad or not")
@@ -89,6 +91,8 @@ Total value: 340 000 000 000 000 000 000 coins
 
 @tree.command(name="minioncraft")
 async def minioncraft(ctx, minion_type: str, tier: int):
+    await ctx.response.defer(thinking=True);
+    
     minion = f"{minion_type.upper()}_GENERATOR_{tier}"
     
     cost = get_minion_craft_cost(minion)
@@ -105,6 +109,6 @@ async def minioncraft(ctx, minion_type: str, tier: int):
     
     message += "\nTotal: " + format_coins(total_price) + " coins"
     
-    await ctx.response.send_message(message)
+    await ctx.followup.send(message)
 
 client.run(os.getenv('TOKEN'))

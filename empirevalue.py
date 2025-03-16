@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from skyblockapiquery import get_prices, get_minion_data, get_minion_craft_cost, get_bazaar_instabuy
-from helper import format_coins
+from helper import format_coins, format_wood_type
 from random import random
 from dotenv import load_dotenv
 from os import getenv
@@ -56,14 +56,12 @@ async def empirestats(ctx: discord.Interaction):
     embed.add_field(name="Minion slots:",
                     value=minion_data["slots"], inline=False)
 
-    WOOD_TYPES = sorted(WOOD_TYPES, key=lambda x: get_prices(x)["sell_offer"], reverse=True)
-
-    for i in WOOD_TYPES:
+    for i in sorted(WOOD_TYPES, key=lambda x: get_prices(x)["sell_offer"], reverse=True):
         info = get_prices(i)
 
-        embed.add_field(name=i.title().replace("_", " "), value=f"""
-                        Sell offer: {info["sell_offer"]}
-                        Insta sell: {info["insta_sell"]}
+        embed.add_field(name=format_wood_type(i), value=f"""
+                        Sell offer: {format_coins(info["sell_offer"])}
+                        Insta sell: {format_coins(info["insta_sell"])}
                         Spread: {round(info["spread"], 1)}
                         """, inline=False)
 
@@ -143,7 +141,7 @@ async def checkstock(ctx):
         embed = discord.Embed(title="Stock Tracker")
         
         for wood in WOOD_TYPES:
-            embed.add_field(name=wood.title().replace("_", " "), value=data[wood])
+            embed.add_field(name=format_wood_type(wood), value=format_coins(data[wood]), inline=False)
         
         await ctx.response.send_message(embed=embed)
 

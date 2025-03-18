@@ -108,7 +108,8 @@ async def minioncraft(ctx, minion_type: str, tier: int):
     await ctx.followup.send(message)
 
 @tree.command(name="addstock", description="Add information about the empire's stock.")
-@app_commands.describe(amount="d - double chest; c - chest; r - red; s - stack. primerno: 2d+5r+3s+56 - 2 double chesta + 5 reda + 3 staka + 56")
+@app_commands.describe(amount=
+                       "d - double chest; c - chest; r - red; s - stack. primerno: 2d+5r+3s+56 - 2 double chesta + 5 reda + 3 staka + 56")
 async def addstock(ctx, wood_type: Literal[tuple(WOOD_TYPES)], amount: str):
     
     if not match("^[0-9dcrs+]+$", amount):
@@ -119,7 +120,7 @@ async def addstock(ctx, wood_type: Literal[tuple(WOOD_TYPES)], amount: str):
     amount = amount.replace("d", "*2c").replace("c", "*3r").replace("r", "*9s").replace("s", "*64")
     x = eval(amount)
     
-    with open("data.empire", "r+") as f:
+    with open("./data.empire", "r+") as f:
         data = json.load(f)
         data[wood_type] += x;
         f.seek(0)
@@ -129,20 +130,34 @@ async def addstock(ctx, wood_type: Literal[tuple(WOOD_TYPES)], amount: str):
 
 @tree.command(name="resetstock", description="Resets the empire's stock tracker.")
 async def resetstock(ctx):
-    with open("data.empire", "w") as f:
+    with open("./data.empire", "w") as f:
         json.dump({w: 0 for w in WOOD_TYPES}, f)
     
     await ctx.response.send_message("Reset stock tracker.")
     
 @tree.command(name="checkstock", description="Check stock tracker.")
 async def checkstock(ctx):
-    with open("data.empire", "r") as f:
+    with open("./data.empire", "r") as f:
         data = json.load(f)
-        embed = discord.Embed(title="Stock Tracker")
         
-        for wood in WOOD_TYPES:
-            embed.add_field(name=format_wood_type(wood), value=format_coins(data[wood]), inline=False)
+    embed = discord.Embed(title="Stock Tracker")
+    
+    for wood in WOOD_TYPES:
+        embed.add_field(name=format_wood_type(wood), value=format_coins(data[wood]), inline=False)
         
-        await ctx.response.send_message(embed=embed)
+    await ctx.response.send_message(embed=embed)
+    
+@tree.command(name="stockworth", description="Check stock worth.")
+async def stockworth(ctx):
+    with open("./data.empire", "r") as f:
+        data = json.load(f)
+        
+    embed = discord.Embed(title="Stock Tracker")
+
+    for wood in WOOD_TYPES:
+        embed.add_field(name=format_wood_type(wood),
+                        value=f"{format_coins(data[wood])} ({format_coins(data[wood]*get_prices(wood)['sell_offer'])})", inline=False)
+    
+    await ctx.response.send_message(embed=embed)
 
 client.run(getenv('TOKEN'))

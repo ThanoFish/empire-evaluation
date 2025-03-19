@@ -157,4 +157,44 @@ async def checkstock(ctx):
     
     await ctx.followup.send(embed=embed)
 
+@tree.command(name="minionpredict", description="Predicts minion profits")
+async def minionpredict(ctx, days: int):
+    await ctx.response.defer(thinking=True)
+    
+    days *= 24 * 60 * 60
+    
+    MAX_COOLDOWN = 27 # seconds
+    FUEL = .25 # lava bucket boost
+    WOOD_PER_ACTION = 4 # 4 loga v edno durvo
+    WOOD_PER_ENCH = 160 # 160 loga v 1 ench log
+    DIAMOND_RATE = .1 # kolko diamanti na vseki item
+    
+    TIME_BETWEEN_ACTIONS = (MAX_COOLDOWN / (1 + FUEL)) * 2 # time between actions (*2 zashtoto zasqva posle seche)
+    
+    with open("./minions.empire", "r") as f:
+        data = json.load(f)
+    
+    embed = discord.Embed(title="Minion Prediction")
+    
+    total = 0
+    
+    diamond_price = get_prices("ENCHANTED_DIAMOND_BLOCK")["sell_offer"]
+    
+    for wood, count in data.items():
+        produced_items = days / TIME_BETWEEN_ACTIONS * WOOD_PER_ACTION * count / WOOD_PER_ENCH
+        items_price = get_prices(wood)["sell_offer"] * produced_items
+        diamonds = produced_items * WOOD_PER_ENCH * DIAMOND_RATE / WOOD_PER_ENCH / WOOD_PER_ENCH
+        diamonds_price = diamond_price * diamonds
+        
+        total += items_price + diamonds_price
+        
+        embed.add_field(name=f"{count}x **{wood.title().replace('_', ' ').replace('Enchanted ', '').replace('Log', 'Minion')}**",
+                        value=f"""{format_coins(produced_items)}x {format_wood_type(wood)} - **{format_coins(items_price)}**
+                        {format_coins(diamonds)}x {format_wood_type('ENCHANTED_DIAMOND_BLOCK')} - **{format_coins(diamonds_price)}**""",
+                        inline=False)
+        
+    embed.add_field(name="**TOTAL**", value=f"**{format_coins(total)}**", inline=False)
+    
+    await ctx.followup.send(embed=embed)
+
 client.run(getenv('TOKEN'))

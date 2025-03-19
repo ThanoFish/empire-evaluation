@@ -20,7 +20,8 @@ api_key = getenv('API_KEY')
 THE_EMPIRE = "d12ac4434e7141baaf1fa09fd60651ce" # skyblock profile uuid
 NIKEYBG = "badcaa4ac60a4f5c883b553c8a45bd63"
 WOOD_TYPES = ['ENCHANTED_ACACIA_LOG', 'ENCHANTED_BIRCH_LOG', 'ENCHANTED_DARK_OAK_LOG',
-                  'ENCHANTED_JUNGLE_LOG', 'ENCHANTED_OAK_LOG', 'ENCHANTED_SPRUCE_LOG']
+                  'ENCHANTED_JUNGLE_LOG', 'ENCHANTED_OAK_LOG', 'ENCHANTED_SPRUCE_LOG',
+                  "ENCHANTED_DIAMOND_BLOCK", "ENCHANTED_COBBLESTONE"]
 
 @client.event
 async def on_ready():
@@ -112,7 +113,7 @@ async def minioncraft(ctx, minion_type: str, tier: int):
                        "d - double chest; c - chest; r - red; s - stack. primerno: 2d+5r+3s+56 - 2 double chesta + 5 reda + 3 staka + 56")
 async def addstock(ctx, wood_type: Literal[tuple(WOOD_TYPES)], amount: str):
     
-    if not match("^[0-9dcrs+]+$", amount):
+    if not match("^[0-9dcrs+\-]+$", amount):
         await ctx.response.send_message("еби си майката педераст")
         return
     
@@ -135,29 +136,25 @@ async def resetstock(ctx):
     
     await ctx.response.send_message("Reset stock tracker.")
     
-@tree.command(name="checkstock", description="Check stock tracker.")
+@tree.command(name="checkstock", description="Check stock worth.")
 async def checkstock(ctx):
+    await ctx.response.defer(thinking=True)
+    
     with open("./data.empire", "r") as f:
         data = json.load(f)
         
     embed = discord.Embed(title="Stock Tracker")
-    
-    for wood in WOOD_TYPES:
-        embed.add_field(name=format_wood_type(wood), value=format_coins(data[wood]), inline=False)
-        
-    await ctx.response.send_message(embed=embed)
-    
-@tree.command(name="stockworth", description="Check stock worth.")
-async def stockworth(ctx):
-    with open("./data.empire", "r") as f:
-        data = json.load(f)
-        
-    embed = discord.Embed(title="Stock Tracker")
+    total = 0
 
     for wood in WOOD_TYPES:
+        cur_price = data[wood]*get_prices(wood)['sell_offer']
+        total += cur_price
+        
         embed.add_field(name=format_wood_type(wood),
-                        value=f"{format_coins(data[wood])} ({format_coins(data[wood]*get_prices(wood)['sell_offer'])})", inline=False)
+                        value=f"{format_coins(data[wood])} **({format_coins(cur_price)})**", inline=False)
     
-    await ctx.response.send_message(embed=embed)
+    embed.add_field(name="**TOTAL**", value=f"**{format_coins(total)}**")
+    
+    await ctx.followup.send(embed=embed)
 
 client.run(getenv('TOKEN'))

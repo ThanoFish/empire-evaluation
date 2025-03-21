@@ -15,6 +15,7 @@ from time import time
 
 AZ = 700998149170397305 # tova sum az
 intents = discord.Intents.default()
+intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
@@ -43,6 +44,12 @@ async def on_ready():
         f.truncate(0)
         f.seek(0)
         json.dump(timers_array, f)
+
+@client.event
+async def on_message(m):
+    if m.content.startswith(".") and match("^\.[0-9+\-*/()km]+$", m.content):
+        processed = m.content[1:].replace("k", "*1000").replace("m", "*1000000")
+        await m.reply(f"{eval(processed):,}")
 
 @tree.command(name="test", description="replys omg")
 async def test(ctx, arg: str):

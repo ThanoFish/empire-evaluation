@@ -11,6 +11,7 @@ import json
 from random import random
 from typing import Literal
 from re import match
+from time import time
 
 AZ = 700998149170397305 # tova sum az
 intents = discord.Intents.default()
@@ -21,7 +22,7 @@ load_dotenv()
 
 api_key = getenv('API_KEY')
 THE_EMPIRE = "d12ac4434e7141baaf1fa09fd60651ce" # skyblock profile uuid
-NIKEYBG = "badcaa4ac60a4f5c883b553c8a45bd63"
+NIKEYBG = "badcaa4ac60a4f5c883b553c8a45bd63" # minecraft uuid
 WOOD_TYPES = ['ENCHANTED_ACACIA_LOG', 'ENCHANTED_BIRCH_LOG', 'ENCHANTED_DARK_OAK_LOG',
                   'ENCHANTED_JUNGLE_LOG', 'ENCHANTED_OAK_LOG', 'ENCHANTED_SPRUCE_LOG',
                   "ENCHANTED_DIAMOND_BLOCK", "ENCHANTED_COBBLESTONE"]
@@ -29,7 +30,16 @@ WOOD_TYPES = ['ENCHANTED_ACACIA_LOG', 'ENCHANTED_BIRCH_LOG', 'ENCHANTED_DARK_OAK
 @client.event
 async def on_ready():
     print("Ready!")
-
+    with open("./timers.empire", "r+") as f:
+        timers_array = json.load(f)
+        i = 0
+        while i < len(timers_array):
+            t = timers_array[i]
+            if time() >= t["timestamp"]:
+                timers_array.pop(i)
+                i -= 1
+                t["channel"].send(f"@everyone {t.message}")
+            i += 1
 
 @tree.command(name="test", description="replys omg")
 async def test(ctx, arg: str):
@@ -199,5 +209,21 @@ async def minionpredict(ctx, days: int):
     embed.add_field(name="**TOTAL**", value=f"**{format_coins(total)}**", inline=False)
     
     await ctx.followup.send(embed=embed)
+
+@tree.command(name="timer", description="start timer")
+async def timer(ctx, days: int, message: str, channel: discord.TextChannel):
+    timer_data = {
+        "timestamp": time() + days*24*60*60,
+        "message": message,
+        "channel": channel
+    }
+    
+    with open("./timers.empire", "r+") as f:
+        timer_array = json.load(f)
+        timer_array += timer_data
+        f.seek(0)
+        json.dump(timer_array, f)
+    
+    await ctx.response.send_message("Created timer.")
 
 client.run(getenv('TOKEN'))

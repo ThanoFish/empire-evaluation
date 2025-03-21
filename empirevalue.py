@@ -40,6 +40,9 @@ async def on_ready():
                 i -= 1
                 await client.get_channel(t["channel"]).send(f"@everyone {t['message']}")
             i += 1
+        f.truncate(0)
+        f.seek(0)
+        json.dump(timers_array, f)
 
 @tree.command(name="test", description="replys omg")
 async def test(ctx, arg: str):

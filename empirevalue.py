@@ -38,7 +38,7 @@ async def on_ready():
             if time() >= t["timestamp"]:
                 timers_array.pop(i)
                 i -= 1
-                t["channel"].send(f"@everyone {t.message}")
+                await client.get_channel(t["channel"]).send(f"@everyone {t['message']}")
             i += 1
 
 @tree.command(name="test", description="replys omg")
@@ -215,14 +215,14 @@ async def timer(ctx, days: int, message: str, channel: discord.TextChannel):
     timer_data = {
         "timestamp": time() + days*24*60*60,
         "message": message,
-        "channel": channel
+        "channel": channel.id
     }
-    
+        
     with open("./timers.empire", "r+") as f:
         timer_array = json.load(f)
-        timer_array += timer_data
+        timer_array.append(timer_data)
         f.seek(0)
-        json.dump(timer_array, f)
+        f.write(json.dumps(timer_array))
     
     await ctx.response.send_message("Created timer.")
 

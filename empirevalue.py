@@ -193,6 +193,7 @@ async def minionpredict(ctx, days: int):
     embed = discord.Embed(title="Minion Prediction")
     
     total = 0
+    total_xp = 0
     
     diamond_price = get_prices("ENCHANTED_DIAMOND_BLOCK")["sell_offer"]
     
@@ -201,15 +202,17 @@ async def minionpredict(ctx, days: int):
         items_price = get_prices(wood)["sell_offer"] * produced_items
         diamonds = produced_items * WOOD_PER_ENCH * DIAMOND_RATE / WOOD_PER_ENCH / WOOD_PER_ENCH
         diamonds_price = diamond_price * diamonds
+        xp = produced_items * 16
         
         total += items_price + diamonds_price
+        total_xp += xp
         
         embed.add_field(name=f"{count}x **{wood.title().replace('_', ' ').replace('Enchanted ', '').replace('Log', 'Minion')}**",
                         value=f"""{format_coins(produced_items)}x {format_wood_type(wood)} - **{format_coins(items_price)}**
                         {format_coins(diamonds)}x {format_wood_type('ENCHANTED_DIAMOND_BLOCK')} - **{format_coins(diamonds_price)}**""",
                         inline=False)
         
-    embed.add_field(name="**TOTAL**", value=f"**{format_coins(total)}**", inline=False)
+    embed.add_field(name="**TOTAL**", value=f"**{format_coins(total)}** ({round(total_xp)} XP)", inline=False)
     
     await ctx.followup.send(embed=embed)
 

@@ -47,7 +47,7 @@ async def on_ready():
 
 @client.event
 async def on_message(m):
-    if m.content.startswith(".") and match("^\.[0-9+\-*/()km]+$", m.content):
+    if match("^\.[0-9+\-*/()km]+$", m.content):
         processed = m.content[1:].replace("k", "*1000").replace("m", "*1000000")
         await m.reply(f"{eval(processed):,}")
 
